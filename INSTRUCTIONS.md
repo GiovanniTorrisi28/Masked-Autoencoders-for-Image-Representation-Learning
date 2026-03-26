@@ -39,15 +39,15 @@ This file contains the list of available projects, complete details for each pro
 | 11 | [Masked Autoencoders for Image Representation Learning](#project-11) | Self-Supervised Learning | Small | ImageNet 1K | G21 |
 | 12 | [Clustering-based SSL for Action Discovery](#project-12) | Self-Supervised Learning | Medium | Kinetics-400 | Free |
 | 13 | [Temporal Action Segmentation from Video](#project-13) | Video Understanding | Small | EGTEA Gaze+ | Free |
-| 14 | [Action Anticipation from Video](#project-14) | Video Understanding | Medium | EPIC-KITCHENS | Free |
-| 15 | [Vision-Language Alignment with CLIP for Video](#project-15) | Vision & Language | Medium | EPIC-KITCHENS | Free |
+| 14 | [Action Anticipation from Video](#project-14) | Video Understanding | Medium | EPIC-KITCHENS | Le larunghie |
+| 15 | [Vision-Language Alignment with CLIP for Video](#project-15) | Vision & Language | Medium | EPIC-KITCHENS | Justgood AI |
 | 16 | [Multimodal Action Recognition – Video + Audio](#project-16) | Video Understanding | Large | EPIC-KITCHENS | Free |
 | 17 | [Egocentric Video + Gaze for Action Recognition](#project-17) | Video Understanding | Large | EGTEA Gaze+ | The Outliers 2.0 |
 | 18 | [State-Space Models (Mamba) for Mistake Detection](#project-18) | Advanced Sequential Modeling | Large | Assembly101 | Free |
 | 19 | [Transformer vs RNN for Procedural Video Understanding](#project-19) | Advanced Sequential Modeling | Medium | EGO4D Goal-Step | Free |
 | 20 | [Image & Language Representation Learning](#project-20) | Vision & Language | Medium | MS-COCO | Free |
 | 21 | [Deep Reinforcement Learning for Frame Selection in Video](#project-21) | Reinforcement Learning | Large | UCF101 | Free |
-| 22 | [Learn to Play Super Mario Bros with Deep Reinforcement Learning](#project-22) | Reinforcement Learning | Large | Super Mario Bros Environment | Free |
+| 22 | [Learn to Play Super Mario Bros with Deep Reinforcement Learning](#project-22) | Reinforcement Learning | Medium | Super Mario Bros Environment | G20 |
 | 23 | [Align a Small LLM with GRPO for Strict Code or JSON Generation](#project-23) | Reinforcement Learning | Medium | Synthetic Logic Array | G23 |
 
 ## Detailed Project Descriptions
