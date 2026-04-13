@@ -1,0 +1,21 @@
+# Core scientific stack
+numpy
+pandas
+matplotlib
+#scikit-learn
+pyyaml
+tqdm
+
+# Deep learning
+#torch
+#torchvision
+#torchaudio
+
+# Logging and monitoring
+#tensorboard
+
+# Dataset download
+kaggle
+
+# Image handling
+pillow

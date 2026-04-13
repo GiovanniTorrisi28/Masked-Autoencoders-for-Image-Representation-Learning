@@ -19,4 +19,5 @@ dependencies:
       - pyyaml
       - tensorboard
       - tqdm
+      - kaggle
       # Add other pip-only packages here
