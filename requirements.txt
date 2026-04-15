@@ -7,12 +7,16 @@ pyyaml
 tqdm
 
 # Deep learning
-#torch
-#torchvision
-#torchaudio
+torch
+torchvision
+torchaudio
 
 # Logging and monitoring
-#tensorboard
+tensorboard
+wandb
+
+# Notebook kernel support
+ipykernel
 
 # Dataset download
 kaggle

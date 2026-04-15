@@ -1,0 +1,35 @@
+seed: 42
+
+model:
+  name: vit_b_16
+
+data:
+  data_root: data/raw/imagenet100
+  image_size: 224
+  num_workers: 2
+  pin_memory: true
+
+training:
+  device: cuda
+  batch_size: 16
+  epochs: 10
+  amp: true
+
+optimizer:
+  name: adamw
+  lr: 0.0003
+  weight_decay: 0.05
+
+scheduler:
+  name: cosine
+
+output:
+  dir: experiments/checkpoints/baseline_supervised_cluster
+  tb_dir: experiments/logs/tensorboard/baseline_supervised_cluster
+
+wandb:
+  enabled: false
+  project: mae-track11
+  entity: null
+  run_name: baseline-supervised-vit-b16-cluster
+  tags: [baseline, supervised, vit, cluster]
