@@ -1,0 +1,50 @@
+experiment:
+  name: "smoke_linear_probe"
+  seed: 42
+
+data:
+  root: "data/raw/imagenet100"
+  image_size: 224
+  batch_size: 64
+  num_workers: 4
+  pin_memory: true
+
+model:
+  patch_size: 16
+  img_size: 224
+  num_classes: 100
+  head_dropout: 0.0
+  encoder:
+    embed_dim: 768
+    depth: 12
+    num_heads: 12
+    mlp_ratio: 4.0
+    dropout: 0.0
+  pretrained_encoder: "experiments/checkpoints/smoke_mae/checkpoint_best.pth"
+  freeze_encoder: true
+
+training:
+  epochs: 2
+  warmup_epochs: 1
+  optimizer:
+    name: "adamw"
+    lr: 1.0e-3
+    weight_decay: 0.0
+    betas: [0.9, 0.999]
+  scheduler:
+    name: "cosine"
+    warmup_epochs: 1
+    min_lr: 0.0
+  grad_clip: null
+
+logging:
+  log_dir: "experiments/logs"
+  log_freq: 10
+  use_wandb: true
+  use_tensorboard: true
+  wandb_project: "mae-imagenet100"
+
+checkpointing:
+  checkpoint_dir: "experiments/checkpoints/smoke_linear_probe"
+  save_every: 1
+  resume: null

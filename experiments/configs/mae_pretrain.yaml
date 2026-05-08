@@ -1,0 +1,53 @@
+experiment:
+  name: "mae_pretrain"
+  seed: 42
+
+data:
+  root: "data/raw/imagenet100"
+  image_size: 224
+  batch_size: 256          # reduce to 128 or 64 if GPU memory is tight
+  num_workers: 8
+  pin_memory: true
+
+model:
+  patch_size: 16
+  img_size: 224
+  mask_ratio: 0.75
+  norm_pix_loss: true
+  encoder:
+    embed_dim: 768
+    depth: 12
+    num_heads: 12
+    mlp_ratio: 4.0
+    dropout: 0.0
+  decoder:
+    embed_dim: 512
+    depth: 8
+    num_heads: 16
+    mlp_ratio: 4.0
+
+training:
+  epochs: 200
+  warmup_epochs: 40
+  optimizer:
+    name: "adamw"
+    lr: 1.5e-4             # MAE paper: base_lr=1.5e-4 * batch_size/256
+    weight_decay: 0.05
+    betas: [0.9, 0.95]     # MAE paper uses beta2=0.95
+  scheduler:
+    name: "cosine"
+    warmup_epochs: 40
+    min_lr: 0.0
+  grad_clip: 1.0
+
+logging:
+  log_dir: "experiments/logs"
+  log_freq: 50              # log every N steps
+  use_wandb: true
+  use_tensorboard: true
+  wandb_project: "mae-imagenet100"
+
+checkpointing:
+  checkpoint_dir: "experiments/checkpoints/mae_pretrain"
+  save_every: 20
+  resume: null              # set to a checkpoint path to resume training

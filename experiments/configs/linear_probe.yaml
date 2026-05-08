@@ -1,0 +1,51 @@
+experiment:
+  name: "linear_probe_mae"
+  seed: 42
+
+data:
+  root: "data/raw/imagenet100"
+  image_size: 224
+  batch_size: 256
+  num_workers: 8
+  pin_memory: true
+
+model:
+  patch_size: 16
+  img_size: 224
+  num_classes: 100
+  head_dropout: 0.0
+  encoder:
+    embed_dim: 768
+    depth: 12
+    num_heads: 12
+    mlp_ratio: 4.0
+    dropout: 0.0
+  # Path to the MAE pre-training checkpoint (encoder weights will be extracted)
+  pretrained_encoder: "experiments/checkpoints/mae_pretrain/checkpoint_best.pth"
+  freeze_encoder: true
+
+training:
+  epochs: 90
+  warmup_epochs: 10
+  optimizer:
+    name: "adamw"
+    lr: 1.0e-3
+    weight_decay: 0.0       # no weight decay on a single linear layer
+    betas: [0.9, 0.999]
+  scheduler:
+    name: "cosine"
+    warmup_epochs: 10
+    min_lr: 0.0
+  grad_clip: null
+
+logging:
+  log_dir: "experiments/logs"
+  log_freq: 50
+  use_wandb: true
+  use_tensorboard: true
+  wandb_project: "mae-imagenet100"
+
+checkpointing:
+  checkpoint_dir: "experiments/checkpoints/linear_probe"
+  save_every: 10
+  resume: null

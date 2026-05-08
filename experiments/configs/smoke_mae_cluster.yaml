@@ -1,0 +1,53 @@
+experiment:
+  name: "smoke_mae_pretrain"
+  seed: 42
+
+data:
+  root: "data/raw/imagenet100"  # same relative path as local
+  image_size: 224
+  batch_size: 64           # safe for gpu-xlarge (22 GB VRAM)
+  num_workers: 4
+  pin_memory: true
+
+model:
+  patch_size: 16
+  img_size: 224
+  mask_ratio: 0.75
+  norm_pix_loss: true
+  encoder:
+    embed_dim: 768
+    depth: 12
+    num_heads: 12
+    mlp_ratio: 4.0
+    dropout: 0.0
+  decoder:
+    embed_dim: 512
+    depth: 8
+    num_heads: 16
+    mlp_ratio: 4.0
+
+training:
+  epochs: 2                # smoke test: just verify pipeline runs
+  warmup_epochs: 1
+  optimizer:
+    name: "adamw"
+    lr: 0.75e-4            # scaled: 1.5e-4 * (128/256)
+    weight_decay: 0.05
+    betas: [0.9, 0.95]
+  scheduler:
+    name: "cosine"
+    warmup_epochs: 1
+    min_lr: 0.0
+  grad_clip: 1.0
+
+logging:
+  log_dir: "experiments/logs"
+  log_freq: 10             # log more frequently during smoke test
+  use_wandb: true
+  use_tensorboard: true
+  wandb_project: "mae-imagenet100"
+
+checkpointing:
+  checkpoint_dir: "experiments/checkpoints/smoke_mae"
+  save_every: 1
+  resume: null

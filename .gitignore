@@ -14,3 +14,8 @@ experiments/checkpoints/
 *.log
 
 .DS_Store
+
+.env
+
+wandb/
+slurm_logs/

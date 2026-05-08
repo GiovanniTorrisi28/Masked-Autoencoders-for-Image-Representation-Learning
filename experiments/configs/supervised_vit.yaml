@@ -1,0 +1,49 @@
+experiment:
+  name: "supervised_vit_baseline"
+  seed: 42
+
+data:
+  root: "data/raw/imagenet100"
+  image_size: 224
+  batch_size: 256
+  num_workers: 8
+  pin_memory: true
+
+model:
+  patch_size: 16
+  img_size: 224
+  num_classes: 100
+  label_smoothing: 0.1
+  head_dropout: 0.0
+  encoder:
+    embed_dim: 768
+    depth: 12
+    num_heads: 12
+    mlp_ratio: 4.0
+    dropout: 0.1            # light dropout for supervised training
+
+training:
+  epochs: 200
+  warmup_epochs: 20
+  optimizer:
+    name: "adamw"
+    lr: 1.0e-3
+    weight_decay: 0.05
+    betas: [0.9, 0.999]
+  scheduler:
+    name: "cosine"
+    warmup_epochs: 20
+    min_lr: 1.0e-6
+  grad_clip: 1.0
+
+logging:
+  log_dir: "experiments/logs"
+  log_freq: 50
+  use_wandb: true
+  use_tensorboard: true
+  wandb_project: "mae-imagenet100"
+
+checkpointing:
+  checkpoint_dir: "experiments/checkpoints/supervised_vit"
+  save_every: 10
+  resume: null
