@@ -1,7 +1,8 @@
+from collections import defaultdict
 from pathlib import Path
 
 import torch
-from torch.utils.data import ConcatDataset, DataLoader
+from torch.utils.data import ConcatDataset, DataLoader, Subset
 from torchvision import datasets, transforms
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
@@ -119,6 +120,30 @@ class _FixedClassImageFolder(datasets.ImageFolder):
         return classes, {c: self._class_to_idx_override[c] for c in classes}
 
 
+def _stratified_subset(dataset: torch.utils.data.Dataset, fraction: float, seed: int) -> Subset:
+    """Returns a Subset with stratified sampling: keeps `fraction` images per class."""
+    if isinstance(dataset, ConcatDataset):
+        targets = [t for ds in dataset.datasets for t in ds.targets]
+    else:
+        targets = list(dataset.targets)
+
+    rng = torch.Generator()
+    rng.manual_seed(seed)
+
+    class_indices: dict[int, list[int]] = defaultdict(list)
+    for idx, label in enumerate(targets):
+        class_indices[label].append(idx)
+
+    selected: list[int] = []
+    for label in sorted(class_indices):
+        indices = class_indices[label]
+        n_keep = max(1, int(len(indices) * fraction))
+        perm = torch.randperm(len(indices), generator=rng).tolist()
+        selected.extend(indices[perm[i]] for i in range(n_keep))
+
+    return Subset(dataset, sorted(selected))
+
+
 class ImageNet100Dataset(torch.utils.data.Dataset):
     """
     Dataset for ImageNet100 (or any ImageFolder-compatible subset).
@@ -141,6 +166,8 @@ class ImageNet100Dataset(torch.utils.data.Dataset):
         root: str | Path,
         split: str,
         transform=None,
+        fraction: float = 1.0,
+        fraction_seed: int = 42,
     ) -> None:
         root = Path(root)
         split_dirs = _find_split_dirs(root, split)
@@ -164,13 +191,17 @@ class ImageNet100Dataset(torch.utils.data.Dataset):
             ]
             self._dataset = ConcatDataset(sub_datasets)
 
+        if fraction < 1.0:
+            self._dataset = _stratified_subset(self._dataset, fraction, fraction_seed)
+
         self._class_to_idx = class_to_idx
         self._num_classes = len(class_to_idx)
 
+        fraction_str = f" (fraction={fraction:.0%})" if fraction < 1.0 else ""
         print(
             f"[Dataset] '{split}' → {len(split_dirs)} dir(s): "
             f"{[d.name for d in split_dirs]}  |  "
-            f"{len(self)} images, {self._num_classes} classes"
+            f"{len(self)} images, {self._num_classes} classes{fraction_str}"
         )
 
     def __len__(self) -> int:
@@ -197,12 +228,18 @@ def build_dataloader(
     pin_memory: bool = True,
     drop_last: bool = False,
     shuffle: bool | None = None,
+    fraction: float = 1.0,
+    fraction_seed: int = 42,
 ) -> DataLoader:
     """
     Factory that wraps ImageNet100Dataset in a DataLoader.
     shuffle defaults to True for 'train', False otherwise.
+    fraction < 1.0 applies stratified subsampling to the training split.
     """
-    dataset = ImageNet100Dataset(root=root, split=split, transform=transform)
+    dataset = ImageNet100Dataset(
+        root=root, split=split, transform=transform,
+        fraction=fraction, fraction_seed=fraction_seed,
+    )
     if shuffle is None:
         shuffle = split == "train"
     loader = DataLoader(

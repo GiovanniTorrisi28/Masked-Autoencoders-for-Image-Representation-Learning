@@ -60,6 +60,8 @@ def main() -> None:
         num_workers=cfg["data"]["num_workers"],
         pin_memory=cfg["data"].get("pin_memory", True),
         drop_last=True,
+        fraction=cfg["data"].get("fraction", 1.0),
+        fraction_seed=cfg["data"].get("fraction_seed", 42),
     )
     val_loader = build_dataloader(
         root=cfg["data"]["root"],
