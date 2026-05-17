@@ -34,8 +34,10 @@ _IMAGENET_STD  = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Visualize MAE reconstructions from val set")
-    parser.add_argument("--config",      required=True,  help="Path to MAE config YAML")
-    parser.add_argument("--checkpoint",  required=True,  help="Path to MAE checkpoint")
+    parser.add_argument("--config",      default="experiments/configs/mae_pretrain_cluster.yaml",
+                        help="Path to MAE config YAML")
+    parser.add_argument("--checkpoint",  default="experiments/checkpoints/mae_pretrain/checkpoint_best.pth",
+                        help="Path to MAE checkpoint")
     parser.add_argument("--num-images",  type=int, default=8,
                         help="Number of images to visualize (default: 8)")
     parser.add_argument("--output",      default="figures/",
