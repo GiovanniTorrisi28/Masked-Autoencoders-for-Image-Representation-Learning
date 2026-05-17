@@ -40,13 +40,25 @@ apptainer exec --nv /shared/sifs/latest.sif \
 apptainer exec --nv /shared/sifs/latest.sif \
     python evaluate.py \
         --config experiments/configs/supervised_vit_small_cluster.yaml \
-        --checkpoint experiments/checkpoints/supervised_vit_small_dataset/checkpoint_best.pth \
+        --checkpoint "experiments/checkpoints/supervised_vit_small_dataset_10%/checkpoint_best.pth" \
         --label "Supervised ViT - 10% Dataset (100 ep)"
 
 apptainer exec --nv /shared/sifs/latest.sif \
     python evaluate.py \
         --config experiments/configs/linear_probe_small_cluster.yaml \
-        --checkpoint experiments/checkpoints/linear_probe_small_dataset/checkpoint_best.pth \
+        --checkpoint "experiments/checkpoints/linear_probe_small_dataset_10%/checkpoint_best.pth" \
         --label "MAE + Linear Probe - 10% Dataset (100 ep)"
+
+apptainer exec --nv /shared/sifs/latest.sif \
+    python evaluate.py \
+        --config "experiments/configs/supervised_vit_small_dataset_20%_cluster.yaml" \
+        --checkpoint "experiments/checkpoints/supervised_vit_small_dataset_20%/checkpoint_best.pth" \
+        --label "Supervised ViT - 20% Dataset (100 ep)"
+
+apptainer exec --nv /shared/sifs/latest.sif \
+    python evaluate.py \
+        --config "experiments/configs/linear_probe_small_dataset_20%_cluster.yaml" \
+        --checkpoint "experiments/checkpoints/linear_probe_small_dataset_20%/checkpoint_best.pth" \
+        --label "MAE + Linear Probe - 20% Dataset (100 ep)"
 
 echo "Done: $(date)"
