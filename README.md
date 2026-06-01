@@ -248,14 +248,11 @@ Tutti i modelli valutati sull'intero validation set (5.000 immagini, 100 classi)
 
 ---
 
-## 🖥 Cluster GPU
+## 🖥 Esecuzione su Cluster HPC
 
-Il training è stato eseguito su `gcluster.dmi.unict.it` tramite SLURM su una GPU NVIDIA L40S (48 GB VRAM). Gli script SLURM si trovano in `scripts/slurm/`.
+Il codice Python è completamente portabile — gira su qualsiasi macchina con PyTorch e una GPU CUDA senza modifiche.
 
-Per caricare codice e configurazioni sul cluster (Windows):
-```powershell
-.\scripts\sync_to_cluster.ps1 -User <username>
-```
+Gli script SLURM in `scripts/slurm/` sono stati configurati per il cluster GPU dell'Università di Catania. Per eseguire su un altro cluster HPC è necessario adattare i parametri `--partition`, `--account`, `--qos` e il comando di esecuzione del container alle specifiche della propria infrastruttura.
 
 ---
 
