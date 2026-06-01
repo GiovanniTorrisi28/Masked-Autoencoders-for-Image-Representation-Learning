@@ -2,14 +2,11 @@
 numpy
 pandas
 matplotlib
-#scikit-learn
 pyyaml
-tqdm
 
 # Deep learning
 torch
 torchvision
-torchaudio
 
 # Logging and monitoring
 tensorboard
