@@ -161,7 +161,29 @@ Al contrario, MAE + linear probe **mantiene il 63.12% con il 10% e il 66.62% con
 
 Il divario di data efficiency con il 10% dei dati etichettati è di **54.82 punti percentuali** (63.12% vs 8.30%), dimostrando il vantaggio fondamentale del pre-training auto-supervisionato in regimi a basse etichette.
 
-### 5.3 Qualità della Ricostruzione MAE
+### 5.3 Analisi Per-Classe
+
+Per approfondire le differenze tra i modelli, è stata condotta un'analisi dell'accuratezza Top-1 per ciascuna delle 100 classi su tutti e 6 gli esperimenti. I risultati completi sono disponibili in `experiments/results/per_class_accuracy.csv`.
+
+**Classi strutturalmente difficili per tutti i modelli.** Le classi con accuratezza media più bassa trasversalmente a tutti i modelli appartengono sempre a categorie tassonomicamente simili: serpenti (*night snake* ~14%, *sidewinder* ~15%), anfibi (*tailed frog* ~21%), ragni (*barn spider* ~29%). Il dataset include 17 specie di serpenti visivamente quasi identiche — stessa forma, texture simile, ambienti identici — che rappresentano una sfida di classificazione fine-grained che nessun modello riesce a risolvere completamente, indipendentemente dalla quantità di dati.
+
+**MAE+LP supera il supervised su classi con texture complessa.** Su dataset completo, MAE+LP ottiene accuratezze superiori al supervised su classi caratterizzate da texture non strutturate e pattern organici irregolari:
+
+| Classe | Sup 100% | MAE+LP 100% | Δ |
+|:---|:---:|:---:|:---:|
+| chiton | 62% | **86%** | +24% |
+| black & gold garden spider | 66% | **86%** | +20% |
+| electric ray | 62% | **78%** | +16% |
+| water ouzel | 66% | **82%** | +16% |
+| tarantula | 76% | **86%** | +10% |
+
+La perdita di ricostruzione MAE forza l'encoder ad apprendere pattern di texture fine — utili per distinguere invertebrati e animali acquatici con morfologie simili — mentre il supervised li ignora se non sono strettamente discriminativi per la classificazione globale.
+
+**Collasso per classe con dati limitati.** Con il 10% dei dati, il supervised scende a 0% su decine di classi (*cock*, *hen*, *bald eagle*, *tench*, *black swan*, tra le altre). MAE+LP sulle stesse classi mantiene rispettivamente 66%, 64%, 62%, 86%, 90%. Il divario non è marginale: si tratta del confronto tra un modello che non apprende nulla e uno che mantiene performance quasi intatte.
+
+**Classi robuste per MAE anche con pochi dati.** Alcune classi vengono classificate bene da MAE+LP anche con solo il 10% delle etichette, suggerendo che le loro feature sono facilmente separabili nello spazio dell'encoder pre-addestrato: *lorikeet* (92%), *great grey owl* (92%), *black swan* (90%), *spotted salamander* (86%), *tench* (86%). Questi animali presentano pattern cromatici e morfologici molto caratteristici che il MAE impara durante la ricostruzione.
+
+### 5.4 Qualità della Ricostruzione MAE
 
 Il decoder produce ricostruzioni visivamente coerenti delle patch mascherate. Il modello inferisce correttamente texture, colori e forme approssimative delle regioni nascoste dal 25% di contesto visibile. Alcuni dettagli di fine grained (bordi netti, oggetti piccoli) rimangono imperfetti, come atteso dato il rapporto di mascheratura del 75% — il decoder deve ricostruire la maggior parte del contenuto dell'immagine. La qualità della ricostruzione è coerente con una training loss finale di ~0.46 (MSE normalizzato).
 
