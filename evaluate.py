@@ -19,6 +19,8 @@ Usage:
 """
 
 import argparse
+import csv
+from pathlib import Path
 
 import torch
 
@@ -37,6 +39,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", required=True, help="Path to YAML config file")
     parser.add_argument("--checkpoint", required=True, help="Path to model checkpoint")
     parser.add_argument("--label", default="Model", help="Display name in the results table")
+    parser.add_argument("--output", default=None,
+                        help="CSV path to append results to (e.g. experiments/results/evaluation_results.csv)")
     return parser.parse_args()
 
 
@@ -73,6 +77,23 @@ def main() -> None:
     )
     results = evaluator.evaluate()
     evaluator.print_report(results, label=args.label)
+
+    if args.output:
+        csv_path = Path(args.output)
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+        write_header = not csv_path.exists()
+        with open(csv_path, "a", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["label", "top1", "top5", "loss", "num_samples"])
+            if write_header:
+                writer.writeheader()
+            writer.writerow({
+                "label": args.label,
+                "top1": round(results["top1"], 2),
+                "top5": round(results["top5"], 2),
+                "loss": round(results["loss"], 4),
+                "num_samples": results["num_samples"],
+            })
+        print(f"[Results] Appended to {csv_path}")
 
 
 if __name__ == "__main__":
