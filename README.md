@@ -12,7 +12,7 @@
 
 Implementazione di un **Masked Autoencoder (MAE)** per l'apprendimento auto-supervisionato di rappresentazioni visive su ImageNet100. Un Vision Transformer (ViT-Base/16) viene pre-addestrato mascherando il 75% delle patch dell'immagine e ricostruendo i pixel mancanti, apprendendo rappresentazioni visive ricche senza utilizzare etichette. L'encoder pre-addestrato viene poi valutato tramite linear probing e confrontato con un ViT supervisionato addestrato da zero. Uno studio aggiuntivo sulla data efficiency analizza il comportamento di entrambi gli approcci quando sono disponibili solo il 10% o il 20% dei dati di training etichettati.
 
-> 📖 **Report Ufficiale**: Per i dettagli teorici, l'analisi dell'architettura e la discussione dei risultati, consultare **[REPORT_IT.md](docs/REPORT_IT.md)**.
+> 📖 **Report Ufficiale**: Per i dettagli teorici, l'analisi dell'architettura e la discussione dei risultati, consultare **[REPORT.md](docs/REPORT.md)**.
 
 ---
 
@@ -180,11 +180,6 @@ python visualize_mae.py --num-images 8 --seed 0 --split val
 tensorboard --logdir experiments/logs
 ```
 
-**W&B**: i run vengono registrati offline durante il training sul cluster e possono essere sincronizzati dal login node:
-```bash
-bash scripts/slurm/sync_wandb.sh
-```
-
 ---
 
 ## 📊 Riepilogo Risultati
@@ -255,5 +250,3 @@ Il codice Python è completamente portabile — gira su qualsiasi macchina con P
 Gli script SLURM in `scripts/slurm/` sono stati configurati per il cluster GPU dell'Università di Catania. Per eseguire su un altro cluster HPC è necessario adattare i parametri `--partition`, `--account`, `--qos` e il comando di esecuzione del container alle specifiche della propria infrastruttura.
 
 ---
-
-*Per la dichiarazione dei contributi individuali e l'uso dell'IA, fare riferimento a [`docs/REPORT_IT.md`](docs/REPORT_IT.md).*
