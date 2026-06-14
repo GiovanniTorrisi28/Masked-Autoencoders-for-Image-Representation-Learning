@@ -121,7 +121,7 @@ section[data-marpit-pagination]::after {
   color: #fff;
   border-left: none;
 }
-.card.solid h3, .card.solid strong { color: #fff; }
+.card.solid h3, .card.solid strong, .card.solid em { color: #fff; }
 .card h3 { margin-top: 0; }
 
 .tag {

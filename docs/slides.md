@@ -10,7 +10,7 @@ lang: it
 
 <div class="course">Deep Learning · Advanced Models &amp; Methods</div>
 
-# Imparare a vedere<br>senza etichette
+# Imparare nascondendo<br>
 
 <div class="track">Track 11 — Masked Autoencoders for Image Representation Learning</div>
 
@@ -21,10 +21,10 @@ lang: it
 
 ---
 
-# L'etichettatura è il collo di bottiglia della visione
+# L'etichettatura è il collo di bottiglia della Computer Vision
 
 <div class="cols">
-<div class="narrow">
+<div class="narrow" style="font-size:22px">
 
 Annotare milioni di immagini è **costoso e lento**.
 
@@ -32,7 +32,7 @@ Annotare milioni di immagini è **costoso e lento**.
 
 **Idea (self-supervised):** nascondi gran parte dell'immagine e chiedi al modello di **ricostruirla**.
 
-<div class="card" style="margin-bottom:0">
+<div class="card" style="margin-bottom:40px">
 <strong>ImageNet100</strong> · 100 classi · ~130K train · 5K val
 </div>
 
@@ -155,12 +155,9 @@ Tre <em>trick</em> chiave del paper MAE riprodotti: <strong>masking alto</strong
 # Quasi alla pari col supervisionato — senza etichette
 
 <div class="cols">
-<div class="narrow">
+<div class="narrow" style="margin-top:-100px">
 
-| Modello | Top-1 | Top-5 |
-|:--|:--:|:--:|
-| ViT Superv. | **72.9** | 88.6 |
-| MAE + LP | 71.0 | **91.0** |
+*Dataset completo (100%)*
 
 Solo **−1.9 pp** in Top-1.
 
@@ -169,12 +166,10 @@ In **Top-5 il MAE supera** il supervisionato (+2.4 pp): la classe giusta è quas
 </div>
 <div class="wide">
 
-![w:600](../figures/slides/top1_top5_full.png)
+![w:680](../figures/slides/top1_top5_full.png)
 
 </div>
 </div>
-
-<p class="small">Dataset completo (100%) · l'encoder MAE struttura lo spazio delle feature <strong>senza mai vedere un'etichetta</strong> nel pre-training.</p>
 
 ---
 
@@ -204,20 +199,19 @@ Il ViT da zero **collassa** (best epoch = 2): 86M parametri non si addestrano co
 
 # Cosa impara — e dove sbaglia
 
-<div class="cols">
-<div class="narrow">
+<div class="cols" style="justify-content:center; margin-top:120px">
+<div style="text-align:center">
 
-![w:300](../figures/slides/reconstruction_compact.png)
-<figcaption>Originale · Mascherato 75% · Ricostruzione</figcaption>
+<figcaption><strong>MAE vince al 10% dei dati</strong> — classi con texture caratteristica</figcaption>
+
+![w:580](../figures/slides/per_class_highlights.png)
 
 </div>
-<div class="wide">
+<div style="text-align:center">
 
-<p class="mt0"><strong>MAE vince sulle texture complesse</strong> — invertebrati e animali acquatici, dove ricostruire i pixel forza pattern fini:</p>
+<figcaption><strong>Failure case</strong> — difficili per tutti (classi <em>fine-grained</em>)</figcaption>
 
-![w:560](../figures/slides/per_class_highlights.png)
-
-<p class="small"><strong>Failure case</strong> comuni a tutti i modelli: classi <em>fine-grained</em> quasi identiche (17 specie di serpenti, anfibi).</p>
+![w:580](../figures/slides/failure_case.png)
 
 </div>
 </div>
@@ -251,35 +245,6 @@ Il ViT da zero **collassa** (best epoch = 2): 86M parametri non si addestrano co
 
 </div>
 </div>
-
----
-
-# Iperparametri
-
-| | MAE pre-train | Supervisionato | Linear Probe |
-|:--|:--:|:--:|:--:|
-| Epoche | 500 | 200 | 200 |
-| Optimizer | AdamW | AdamW | AdamW |
-| Learning rate | 7.5e-5 | 1e-3 | 1e-2 |
-| Weight decay | 0.05 | 0.05 | 0.0 |
-| Schedule | cosine | cosine | cosine |
-| Batch size | 128 | 128 | 128 |
-| Note | β=(0.9,0.95) · clip 1.0 | label smooth 0.1 | encoder congelato |
-
----
-
-# Tutti i risultati
-
-| Modello | Dati | Top-1 | Top-5 | Val loss |
-|:--|:--:|:--:|:--:|:--:|
-| ViT Supervisionato | 100% | 72.94 | 88.62 | 1.313 |
-| MAE + Linear Probe | 100% | 71.02 | 91.04 | 1.091 |
-| ViT Supervisionato | 20% | 11.66 | 31.88 | 3.836 |
-| MAE + Linear Probe | 20% | 66.62 | 88.48 | 1.280 |
-| ViT Supervisionato | 10% | 8.30 | 25.92 | 3.999 |
-| MAE + Linear Probe | 10% | 63.12 | 86.90 | 1.425 |
-
-<p class="small">Architettura: ViT-Base/16 (~86M param) · decoder 512 dim / 8 layer / 16 head · pos-embed sinusoidali 2D · valutazione su 5.000 immagini di validation.</p>
 
 ---
 

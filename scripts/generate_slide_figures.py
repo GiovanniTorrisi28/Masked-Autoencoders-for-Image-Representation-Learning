@@ -142,10 +142,6 @@ def top1_top5_full() -> None:
     ax.set_ylim(0, 106)
     ax.legend(loc="upper left", frameon=False, fontsize=14, ncol=1)
 
-    # nota: MAE supera in Top-5 senza usare etichette nel pre-training
-    ax.text(1, mae_vals[1] + 4.5, "MAE supera\nin Top-5", ha="center", fontsize=12.5,
-            fontweight="bold", color=ORANGE_DARK)
-
     fig.tight_layout()
     fig.savefig(OUT / "top1_top5_full.png")
     plt.close(fig)
@@ -153,35 +149,64 @@ def top1_top5_full() -> None:
 
 
 def per_class_highlights(top_n: int = 5) -> None:
-    """Classi con il maggior vantaggio MAE+LP rispetto al supervised (100% dati)."""
+    """Classi con il maggior vantaggio MAE+LP rispetto al supervised (10% dati)."""
     df = pd.read_csv(RESULTS / "per_class_accuracy.csv")
-    df["delta"] = df["MAE+LP 100%"] - df["Sup 100%"]
+    df["delta"] = df["MAE+LP 10%"] - df["Sup 10%"]
     top = df.sort_values("delta", ascending=False).head(top_n).iloc[::-1]
 
     fig, ax = plt.subplots(figsize=(9.0, 4.0))
     ypos = range(len(top))
     bars = ax.barh(list(ypos), top["delta"], color=ORANGE, height=0.62)
 
-    for rect, name, dsup, dmae in zip(bars, top["class_name"], top["Sup 100%"], top["MAE+LP 100%"]):
-        w = rect.get_width()
-        ax.annotate(f"+{w:.0f} pp", (w, rect.get_y() + rect.get_height() / 2),
+    for rect in zip(bars, top["class_name"], top["Sup 10%"], top["MAE+LP 10%"]):
+        r, name, dsup, dmae = rect
+        w = r.get_width()
+        ax.annotate(f"+{w:.0f} pp", (w, r.get_y() + r.get_height() / 2),
                     textcoords="offset points", xytext=(6, 0), va="center",
                     fontsize=13, fontweight="bold", color=ORANGE_DARK)
 
     ax.set_yticks(list(ypos))
     ax.set_yticklabels(
         [f"{n}\n({int(s)}% → {int(m)}%)" for n, s, m in
-         zip(top["class_name"], top["Sup 100%"], top["MAE+LP 100%"])],
+         zip(top["class_name"], top["Sup 10%"], top["MAE+LP 10%"])],
         fontsize=12.5,
     )
-    ax.set_xlabel("Vantaggio MAE+LP  vs  Supervisionato  (punti %)", fontsize=14, labelpad=8)
+    ax.set_xlabel("Vantaggio MAE+LP  vs  Supervisionato  (10% dati, punti %)", fontsize=14, labelpad=8)
     ax.set_xlim(0, max(top["delta"]) + 8)
     ax.grid(axis="y", visible=False)
 
     fig.tight_layout()
     fig.savefig(OUT / "per_class_highlights.png")
     plt.close(fig)
-    print(f"  per_class_highlights.png  (top {top_n}: {', '.join(top['class_name'].iloc[::-1])})")
+    print(f"  per_class_highlights.png  (top {top_n} al 10%: {', '.join(top['class_name'].iloc[::-1])})")
+
+
+def failure_case(bottom_n: int = 5) -> None:
+    """Classi con accuracy più bassa per entrambi i modelli (100% dati)."""
+    import numpy as np
+    df = pd.read_csv(RESULTS / "per_class_accuracy.csv")
+    df["avg"] = (df["MAE+LP 100%"] + df["Sup 100%"]) / 2
+    worst = df.sort_values("avg").head(bottom_n).iloc[::-1]
+
+    fig, ax = plt.subplots(figsize=(9.0, 4.0))
+    ypos = np.arange(len(worst))
+    h = 0.35
+
+    ax.barh(ypos + h / 2, worst["Sup 100%"], h, color=GREY, label="ViT Supervisionato")
+    ax.barh(ypos - h / 2, worst["MAE+LP 100%"], h, color=ORANGE, label="MAE + Linear Probe")
+
+    ax.set_yticks(list(ypos))
+    ax.set_yticklabels(worst["class_name"], fontsize=13)
+    ax.set_xlabel("Top-1 Accuracy  (%, dataset completo)", fontsize=14, labelpad=8)
+    ax.set_xlim(0, 60)
+    ax.legend(loc="upper right", frameon=False, fontsize=13)
+    ax.grid(axis="y", visible=False)
+    ax.axvline(x=50, color=GREY, linestyle="--", linewidth=1.2, alpha=0.5)
+
+    fig.tight_layout()
+    fig.savefig(OUT / "failure_case.png")
+    plt.close(fig)
+    print(f"  failure_case.png  (bottom {bottom_n}: {', '.join(worst['class_name'].iloc[::-1])})")
 
 
 def reconstruction_compact(rows: int = 4) -> None:
@@ -209,6 +234,7 @@ def main() -> None:
     data_efficiency_curve()
     top1_top5_full()
     per_class_highlights()
+    failure_case()
     reconstruction_compact()
     print("Fatto.")
 
